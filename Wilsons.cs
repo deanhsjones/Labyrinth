@@ -79,6 +79,9 @@ public class Wilsons : Maze
         while (cx > 0 && cx < width - 1 && cz > 0 && cz < depth - 1 && loop < 5000 && !validPath)
         {
             map[cx, cz] = 0;
+
+            if(CountSquareMazeNeighbours(cx, cz) > 1)
+                break;
             
             int rd = Random.Range(0, directions.Count);
             int nx = cx + directions[rd].x;

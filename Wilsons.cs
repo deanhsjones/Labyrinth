@@ -18,21 +18,40 @@ public class Wilsons : Maze
         int z = Random.Range(2, depth - 1);
         map[x, z] = 2; //existing maze is *not* considered to be part of the drawpath by the crawler
 
+
+        for(int i = 0; i < 5; i++)
+        {
         RandomWalk();
+        }
     }
 
     int CountSquareMazeNeighbours(int x, int z)
     {
-        return 0;
+        int count = 0;
+        for(int d = 0; d < directions.Count; d++)
+        {
+            int nx = x + directions[d].x;
+            int nz = z + directions[d].z;
+
+            if(map[nx, nz] == 2)
+            {
+                count++;
+            }
+        }
+        return count;
     }
    
     void RandomWalk()
     {
         
+        List<MapLocation> inWalk = new List<MapLocation>();
+
+
         int cx = Random.Range(2, width - 1);
         int cz = Random.Range(2, depth - 1);
 
-        
+        inWalk.Add(new MapLocation(cx, cz));
+
 
         int loop = 0;
         bool validPath = false;
@@ -48,7 +67,7 @@ public class Wilsons : Maze
             {
                 cx = nx;
                 cz = nz;
-               
+               inWalk.Add(new MapLocation(cx, cz));
             }
 
             validPath = CountSquareMazeNeighbours(cx, cz) == 1;
@@ -60,8 +79,20 @@ public class Wilsons : Maze
         {
             map[cx, cz] = 0;
             Debug.Log("PathFound");
-        }
 
+            foreach(MapLocation m in inWalk)
+            {
+                map[m.x, m.z] = 2;
+            }    
+                inWalk.Clear();
+            
+        }
+        else
+        {
+            foreach(MapLocation m in inWalk)
+                map[m.x, m.z] = 1;
+            inWalk.Clear();
+        }
     }
 
 }

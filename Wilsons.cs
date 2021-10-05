@@ -10,6 +10,8 @@ public class Wilsons : Maze
                                             new MapLocation(-1,0),
                                             new MapLocation(0,-1) };
 
+    List<MapLocation> notUsed = new List<MapLocation>();
+
     
     public override void Generate()
     {
@@ -19,10 +21,9 @@ public class Wilsons : Maze
         map[x, z] = 2; //existing maze is *not* considered to be part of the drawpath by the crawler
 
 
-        for(int i = 0; i < 5; i++)
-        {
-        RandomWalk();
-        }
+        while(GetAvailableCells() > 1)
+            RandomWalk();
+        
     }
 
     int CountSquareMazeNeighbours(int x, int z)
@@ -40,6 +41,20 @@ public class Wilsons : Maze
         }
         return count;
     }
+
+    int GetAvailableCells()
+    {
+        notUsed.Clear();
+        for(int z = 1; z < depth -1; z++)
+        {
+            for(int x = 1; x < depth -1; x++)
+            {
+            if(CountSquareMazeNeighbours(x, z) == 0)
+            notUsed.Add(new MapLocation(x, z));
+            }
+        }
+       return notUsed.Count;     
+    }
    
     void RandomWalk()
     {
@@ -47,8 +62,13 @@ public class Wilsons : Maze
         List<MapLocation> inWalk = new List<MapLocation>();
 
 
-        int cx = Random.Range(2, width - 1);
-        int cz = Random.Range(2, depth - 1);
+        int cx;
+        int cz;
+        int rstartIndex = Random.Range(0, notUsed.Count);
+
+        cx = notUsed[rstartIndex].x;
+        cz = notUsed[rstartIndex].z;
+
 
         inWalk.Add(new MapLocation(cx, cz));
 

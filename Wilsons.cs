@@ -16,11 +16,15 @@ public class Wilsons : Maze
         //create a starting cell
         int x = Random.Range(2, width - 1);
         int z = Random.Range(2, depth - 1);
-        map[x, z] = 0;
+        map[x, z] = 2; //existing maze is *not* considered to be part of the drawpath by the crawler
 
         RandomWalk();
     }
 
+    int CountSquareMazeNeighbours(int x, int z)
+    {
+        return 0;
+    }
    
     void RandomWalk()
     {
@@ -31,8 +35,9 @@ public class Wilsons : Maze
         
 
         int loop = 0;
+        bool validPath = false;
         
-        while (cx > 0 && cx < width - 1 && cz > 0 && cz < depth - 1 && loop < 5000)
+        while (cx > 0 && cx < width - 1 && cz > 0 && cz < depth - 1 && loop < 5000 && !validPath)
         {
             map[cx, cz] = 0;
             
@@ -46,11 +51,16 @@ public class Wilsons : Maze
                
             }
 
-          
+            validPath = CountSquareMazeNeighbours(cx, cz) == 1;
 
             loop++;
         }
 
+        if (validPath)
+        {
+            map[cx, cz] = 0;
+            Debug.Log("PathFound");
+        }
 
     }
 
